@@ -45,6 +45,20 @@ WebChat 是一个基于 Web 的即时通讯应用，支持多用户聊天、消�
 - 管理个人信息和聊天历史
 
 ## 贡献指南
+<<<<<<< HEAD
+
+欢迎贡献代码、反馈 Bug 或提出新功能建议！
+
+1. Fork 本仓库
+2. 新建分支（如：feat/your-feature）
+3. 提交代码并推送到你的分支
+4. 创建 Pull Request
+
+## License
+
+本项目采用 MIT License，详情请见 LICENSE 文件。
+
+## 贡献指南
 
 欢迎贡献代码、反馈 Bug 或提出新功能建议！
 
@@ -61,3 +75,6 @@ WebChat 是一个基于 Web 的即时通讯应用，支持多用户聊天、消�
 
 - GitHub: [moXue-o](https://github.com/moXue-o)
 - Gitee: [moXue_o](https://gitee.com/moXue_o)
+- Issues: 欢迎通过 [Issue](https://github.com/moXue-o/WebChat/issues) 提交反馈和建议
+
+>>>>>>> 9467fae11e5d351bca64649fbbf6957630b2705f
