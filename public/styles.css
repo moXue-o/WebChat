@@ -1,0 +1,406 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --base-unit: 1rem;
+  --spacing-sm: calc(var(--base-unit) * 0.5);
+  --spacing-md: var(--base-unit);
+  --spacing-lg: calc(var(--base-unit) * 1.5);
+  --spacing-xl: calc(var(--base-unit) * 2);
+}
+
+html, body {
+  overflow: hidden !important;
+  height: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body {
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important;
+  font-size: clamp(16px, 2vw, 20px);
+  position: fixed;
+  width: 100%;
+}
+
+.chat-container {
+  width: clamp(80%, 80vw, 90%);
+  max-width: min(800px, 90vw);
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: clamp(80vh, 90vh, 95vh);
+  max-height: 95vh;
+}
+
+.chat-header {
+  background-color: #4a6ea9;
+  color: white;
+  padding: var(--spacing-md);
+  text-align: center;
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+}
+
+.chat-messages {
+  flex: 1;
+  padding: var(--spacing-md);
+  overflow-y: auto;
+  background-color: #f9f9f9;
+}
+
+.message {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 18px;
+  max-width: 70%;
+  word-break: break-word;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  line-height: 1.5;
+}
+
+.message.user {
+  background-color: #dcf8c6;
+  margin-left: auto;
+}
+
+.message.other {
+  background-color: white;
+  border: 1px solid #ddd;
+}
+
+.message .username {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #4a6ea9;
+}
+
+.message .timestamp {
+  font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+  color: #888;
+  margin-top: var(--spacing-sm);
+  text-align: right;
+}
+
+.chat-input {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-md);
+  background-color: white;
+  border-top: 1px solid #ddd;
+  position: relative;
+  z-index: 10;
+}
+
+.username-input {
+  margin-bottom: var(--spacing-sm);
+}
+
+.username-input label {
+  margin-right: var(--spacing-sm);
+  font-weight: bold;
+}
+
+.username-input input {
+  padding: var(--spacing-sm);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: clamp(150px, 30vw, 250px);
+}
+
+.message-input {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.message-input input {
+  flex: 1;
+  padding: var(--spacing-sm);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+}
+
+.message-input button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: #4a6ea9;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+}
+
+.message-input button:hover {
+  background-color: #3a5a89;
+}
+
+/* 响应式设计 - 移动设备优先 */
+/* 触摸目标优化 */
+.message-input button, .username-input input, .message-input input {
+  min-height: clamp(36px, 8vw, 48px);
+  min-width: clamp(48px, 10vw, 60px);
+  touch-action: manipulation;
+}
+
+/* 超小屏幕 (手机, 小于 576px) */
+@media (max-width: 575.98px) {
+  body {
+    align-items: flex-start;
+    overflow: hidden !important;
+    height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom);
+    box-sizing: border-box;
+    position: fixed;
+    width: 100%;
+  }
+
+  .chat-container {
+    width: 100%;
+    height: 100vh;
+    border-radius: 0;
+    max-height: 100vh;
+    overflow: hidden;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    box-sizing: border-box;
+  }
+
+  /* 适配iOS Safari和其他现代浏览器 */
+  @supports (height: -webkit-fill-available) {
+    .chat-container {
+      height: -webkit-fill-available;
+      max-height: -webkit-fill-available;
+    }
+  }
+
+  .message {
+    max-width: 85%;
+    font-size: clamp(16px, 4vw, 18px);
+    line-height: 1.5;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .chat-header {
+    padding: var(--spacing-sm);
+    font-size: clamp(18px, 5vw, 20px);
+    font-weight: bold;
+  }
+
+  .chat-input {
+    padding: var(--spacing-sm);
+  }
+
+  .username-input {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .username-input input {
+    width: clamp(150px, 40vw, 220px);
+    padding: var(--spacing-sm);
+    font-size: clamp(16px, 4vw, 18px);
+  }
+
+  .message-input input {
+    padding: var(--spacing-sm);
+    font-size: clamp(16px, 4vw, 18px);
+  }
+
+  .message-input button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: clamp(16px, 4vw, 18px);
+    min-width: clamp(60px, 15vw, 80px);
+  }
+
+  /* 优化消息时间戳显示 */
+  .message .timestamp {
+    font-size: clamp(14px, 3vw, 16px);
+  }
+}
+
+/* 小屏幕 (平板, 576px 及以上) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .chat-container {
+    width: clamp(85%, 90vw, 95%);
+    height: clamp(85vh, 90vh, 95vh);
+    max-height: 95vh;
+  }
+
+  .message {
+    max-width: 80%;
+    font-size: clamp(16px, 3vw, 18px);
+    line-height: 1.5;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .chat-header {
+    padding: var(--spacing-md);
+    font-size: clamp(20px, 4vw, 22px);
+  }
+
+  .chat-input {
+    padding: var(--spacing-md);
+  }
+
+  .username-input input {
+    width: clamp(200px, 35vw, 250px);
+    padding: var(--spacing-sm);
+    font-size: clamp(16px, 3vw, 18px);
+  }
+
+  .message-input input {
+    padding: var(--spacing-sm);
+    font-size: clamp(16px, 3vw, 18px);
+  }
+
+  .message-input button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: clamp(16px, 3vw, 18px);
+  }
+
+  /* 平板横屏模式优化 */
+  @media (orientation: landscape) {
+    .chat-container {
+      height: 95vh;
+      max-height: 95vh;
+    }
+
+    .chat-messages {
+      max-height: calc(95vh - clamp(120px, 20vh, 150px));
+    }
+  }
+}
+
+/* 中等屏幕 (桌面显示器, 768px 及以上) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .chat-container {
+    width: clamp(80%, 85vw, 90%);
+    height: clamp(80vh, 85vh, 90vh);
+  }
+}
+
+/* 大屏幕 (大桌面显示器, 992px 及以上) */
+@media (min-width: 992px) {
+  .chat-container {
+    width: clamp(60%, 70vw, 80%);
+    max-width: min(900px, 80vw);
+    height: clamp(75vh, 80vh, 85vh);
+  }
+}
+
+/* 关于图标和模态框样式 */
+.about-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: rgba(160, 160, 160, 0.7);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.3s;
+}
+
+.about-icon:hover {
+  background-color: rgba(160, 160, 160, 1);
+}
+
+.about-modal {
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 1001;
+  width: auto;
+  height: auto;
+  max-width: 90%;
+  max-height: 80vh;
+}
+
+.about-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: relative;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#app-version {
+  font-weight: bold;
+  color: #4a6ea9;
+}
+
+#update-date, #online-count {
+  font-weight: bold;
+  color: #4a6ea9;
+}
+
+/* 横屏模式优化 */
+@media (max-height: 480px) and (orientation: landscape) {
+  body {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+  }
+  .chat-container {
+    height: 100vh;
+  }
+
+  .chat-messages {
+    max-height: clamp(50vh, 60vh, 70vh);
+  }
+}
+
+/* 高DPI屏幕优化 */
+@media (min-resolution: 192dpi) {
+  .message {
+    transform: translateZ(0);
+  }
+}
+
+/* 滚动条样式 */
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>局域网聊天</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <h1>局域网聊天</h1>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <!-- 聊天消息将在这里显示 -->
+    </div>
+    <div class="chat-input">
+      <div class="username-input">
+        <label for="username">用户名:</label>
+        <input type="text" id="username" placeholder="输入用户名">
+      </div>
+      <div class="message-input">
+        <input type="text" id="message-input" placeholder="输入消息...">
+        <button id="send-button">发送</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+<!-- 关于图标和信息模态框 -->
+<div class="about-icon" id="about-icon">i</div>
+<div class="about-modal" id="about-modal">
+  <div class="about-content">
+    <span class="close-btn" id="close-btn">&times;</span>
+    <h2>关于局域网聊天应用</h2>
+    <p>版本: <span id="app-version">1.0.0</span></p>
+    <p>更新日期: <span id="update-date"></span></p>
+    <p>在线人数: <span id="online-count">0</span></p>
+  </div>
+</div>
+
+</body>
+</html>
