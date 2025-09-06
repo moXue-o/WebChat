@@ -385,6 +385,34 @@ body {
   padding: var(--spacing-xl);
   width: clamp(300px, 80vw, 500px);
   max-width: 500px;
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.3s;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-button img {
+  width: 24px;
+  height: 24px;
+  color: #4a6ea9;
+}
+
+.back-button:hover {
+  background-color: #f0f5ff;
 }
 
 .login-container h1 {
@@ -437,6 +465,23 @@ body {
 
 #login-button:hover {
   background-color: #3a5a89;
+}
+
+#register-button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: white;
+  color: #4a6ea9;
+  border: 1px solid #4a6ea9;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  min-height: clamp(36px, 8vw, 48px);
+}
+
+#register-button:hover {
+  background-color: #f0f5ff;
+  border-color: #3a5a89;
 }
 
 .register-link {
