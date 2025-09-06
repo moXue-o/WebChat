@@ -186,6 +186,29 @@ adjustInterfaceSize();
 
 // 推送更新功能已移除
 
+// 退出登录功能
+function setupLogout() {
+  const logoutButton = document.getElementById('logout-button');
+  if (logoutButton) {
+    logoutButton.addEventListener('click', () => {
+      // 清除本地存储的用户信息
+      localStorage.removeItem('username');
+      localStorage.removeItem('authToken');
+      // 断开Socket连接
+      socket.disconnect();
+      // 重定向到登录页面
+      window.location.href = '/login.html';
+    });
+  }
+}
+
+// 确保DOM加载完成后设置退出登录功能
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupLogout);
+} else {
+  setupLogout();
+}
+
 // 设置角落信息
 function setupCornerInfo() {
   const appVersion = document.getElementById('app-version');

@@ -51,6 +51,28 @@ body {
   padding: var(--spacing-md);
   text-align: center;
   font-size: clamp(1.2rem, 3vw, 1.5rem);
+  position: relative;
+}
+
+.logout-button {
+  position: absolute;
+  right: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: calc(var(--spacing-sm) * 0.75) var(--spacing-md);
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  min-height: auto;
+  min-width: auto;
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
 }
 
 .chat-messages {

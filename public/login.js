@@ -37,11 +37,9 @@ passwordInput.addEventListener('keypress', (e) => {
   }
 });
 
-// 注册链接（预留接口）
+// 注册链接
 registerLink.addEventListener('click', (e) => {
-  e.preventDefault();
-  alert('注册功能即将开放，敬请期待！');
-  // 未来可以在这里实现注册逻辑
+  // 移除阻止默认行为的代码，允许链接正常跳转
 });
 
 // 处理登录结果
