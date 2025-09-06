@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 - 局域网聊天</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <h1>局域网聊天</h1>
+    <h2>登录</h2>
+    <div class="login-form">
+      <div class="form-group">
+        <label for="login-username">用户名:</label>
+        <input type="text" id="login-username" placeholder="输入用户名">
+      </div>
+      <div class="form-group">
+        <label for="login-password">密码:</label>
+        <input type="password" id="login-password" placeholder="输入密码">
+      </div>
+      <button id="login-button">登录</button>
+      <p class="register-link">还没有账号？<a href="#" id="register-link">注册</a></p>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>

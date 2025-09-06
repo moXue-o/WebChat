@@ -5,24 +5,61 @@ const socket = io();
 const chatMessages = document.getElementById('chat-messages');
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
-const usernameInput = document.getElementById('username');
 
-// 存储当前用户的用户名
-let username = localStorage.getItem('username') || '';
-usernameInput.value = username;
+// 存储当前用户信息
+let currentUser = null;
 
-// 保存用户名到本地存储
-usernameInput.addEventListener('change', () => {
-  username = usernameInput.value.trim() || '匿名用户';
-  localStorage.setItem('username', username);
-});
+// 检查是否已登录
+function checkLoginStatus() {
+  const savedUsername = localStorage.getItem('username');
+  const authToken = localStorage.getItem('authToken');
+  
+  console.log('检查登录状态:');
+  console.log('用户名:', savedUsername);
+  console.log('令牌:', authToken ? '存在' : '不存在');
+  
+  if (savedUsername && authToken) {
+    // 有保存的用户名和令牌，尝试自动登录
+    currentUser = { username: savedUsername };
+    // 向服务器验证令牌
+    console.log('尝试使用令牌验证');
+    socket.emit('authenticate', { token: authToken });
+  } else {
+    // 如果没有保存的用户名或令牌，重定向到登录页面
+    console.log('没有有效的登录信息，重定向到登录页面');
+    localStorage.removeItem('username');
+    localStorage.removeItem('authToken');
+    window.location.href = '/login.html';
+  }
+}
+
+// 确保DOM加载完成后再检查登录状态
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', checkLoginStatus);
+} else {
+  checkLoginStatus();
+}
+
+// 处理身份验证结果
+socket.on('authenticate result', (result) => {
+  if (result.success) {
+    // 验证成功
+    console.log('身份验证成功');
+    currentUser = { username: localStorage.getItem('username') };
+  } else {
+    // 验证失败，清除无效令牌并重定向到登录页面
+    console.log('身份验证失败:', result.message);
+    localStorage.removeItem('username');
+    localStorage.removeItem('authToken');
+    window.location.href = '/login.html';
+  }
+})
 
 // 发送消息函数
 function sendMessage() {
   const text = messageInput.value.trim();
   if (text) {
     socket.emit('chat message', {
-      username: username || '匿名用户',
       text: text
     });
     messageInput.value = '';
@@ -54,13 +91,28 @@ socket.on('chat message', (message) => {
   scrollToBottom();
 });
 
+// 处理错误消息
+socket.on('error message', (error) => {
+  alert(error.message);
+  if (error.message.includes('请先登录')) {
+    window.location.href = '/login.html';
+  }
+});
+
+// 处理被踢下线
+socket.on('kicked', (data) => {
+  alert(data.message);
+  localStorage.removeItem('username');
+  window.location.href = '/login.html';
+});
+
 // 将消息添加到聊天窗口
 function appendMessage(message) {
   const messageElement = document.createElement('div');
   messageElement.classList.add('message');
   
   // 判断消息是否来自当前用户
-  const isCurrentUser = message.userId === socket.id;
+  const isCurrentUser = currentUser && message.username === currentUser.username;
   messageElement.classList.add(isCurrentUser ? 'user' : 'other');
 
   messageElement.innerHTML = `
@@ -134,52 +186,20 @@ adjustInterfaceSize();
 
 // 推送更新功能已移除
 
-// 关于图标和模态框交互逻辑
-function setupAboutModal() {
-  const aboutIcon = document.getElementById('about-icon');
-  const aboutModal = document.getElementById('about-modal');
-  const closeBtn = document.getElementById('close-btn');
+// 设置角落信息
+function setupCornerInfo() {
   const appVersion = document.getElementById('app-version');
   const updateDate = document.getElementById('update-date');
-  const onlineCount = document.getElementById('online-count');
 
   // 定义版本号
-  const version = { major: 1, minor: 0, patch: 1 };
+  const version = { major: 2, minor: 0, patch: 0 };
   appVersion.textContent = `${version.major}.${version.minor}.${version.patch}`;
+  console.log('当前版本: 2.0.0 - 增加了登录系统和用户数据库');
 
   // 设置更新日期为当前日期
   const now = new Date();
   const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   updateDate.textContent = formattedDate;
-
-  // 初始化在线人数
-  onlineCount.textContent = '0';
-
-  // 监听在线人数更新
-  socket.on('online count', (count) => {
-    onlineCount.textContent = count;
-  });
-
-  // 显示模态框
-  aboutIcon.addEventListener('click', (e) => {
-    e.stopPropagation(); // 防止点击图标时触发窗口点击事件
-    aboutModal.style.display = 'block';
-  });
-
-  // 关闭模态框
-  closeBtn.addEventListener('click', () => {
-    aboutModal.style.display = 'none';
-  });
-
-  // 点击模态框外部（包括主页面）关闭
-  window.addEventListener('click', () => {
-    aboutModal.style.display = 'none';
-  });
-
-  // 防止点击模态框内容时关闭
-  aboutModal.addEventListener('click', (e) => {
-    e.stopPropagation();
-  });
 
   // 提供一个更新版本号的函数
   window.updateVersion = function(updateType = 'patch') {
@@ -203,9 +223,9 @@ function setupAboutModal() {
   };
 }
 
-// 确保DOM加载完成后再初始化关于模态框
+// 确保DOM加载完成后再设置角落信息
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', setupAboutModal);
+  document.addEventListener('DOMContentLoaded', setupCornerInfo);
 } else {
-  setupAboutModal();
+  setupCornerInfo();
 }
