@@ -24,7 +24,7 @@ WebChat 是一个基于 Web 的即时通讯应用，支持多用户聊天、消�
 
 1. 克隆本仓库到本地：
    ```bash
-   git clone https://github.com/moXue-o/WebChat.git
+   git clone https://gitee.com/moXue_o/WebChat.git
    ```
 2. 安装依赖：
    ```bash
