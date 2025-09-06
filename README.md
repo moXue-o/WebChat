@@ -1,39 +1,63 @@
 # WebChat
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+## 项目简介
 
-#### 软件架构
-软件架构说明
+WebChat 是一个基于 Web 的即时通讯应用，支持多用户聊天、消息实时同步、以及简单便捷的部署体验。适合学习、二次开发或小团队内部沟通使用。
 
+## 功能特性
 
-#### 安装教程
+- 支持一对一聊天与群聊
+- 实时消息推送与接收
+- 用户注册、登录与身份认证
+- 聊天消息历史记录
+- 响应式界面，适配多终端
+- 简单易用的管理后台
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 软件架构
 
-#### 使用说明
+- 前端：React / Vue / 或其他主流框架（请根据实际情况修改）
+- 后端：Node.js + Express / Python Flask / 其他
+- 实时通信：WebSocket
+- 数据库：MongoDB / MySQL / SQLite
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 部署与安装
 
-#### 参与贡献
+1. 克隆本仓库到本地：
+   ```bash
+   git clone https://github.com/moXue-o/WebChat.git
+   ```
+2. 安装依赖：
+   ```bash
+   cd WebChat
+   npm install
+   ```
+3. 配置环境变量，参考 `.env.example` 文件
+4. 启动服务：
+   ```bash
+   npm start
+   ```
+5. 访问 http://localhost:3000 即可体验
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+## 使用说明
 
+- 注册新账号并登录
+- 进入联系人或群组开始聊天
+- 管理个人信息和聊天历史
 
-#### 特技
+## 贡献指南
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+欢迎贡献代码、反馈 Bug 或提出新功能建议！
+
+1. Fork 本仓库
+2. 新建分支（如：feat/your-feature）
+3. 提交代码并推送到你的分支
+4. 创建 Pull Request
+
+## License
+
+本项目采用 MIT License，详情请见 LICENSE 文件。
+
+## 联系作者
+
+- GitHub: [moXue-o](https://github.com/moXue-o)
+- Gitee: [moXue_o](https://gitee.com/moXue_o)
