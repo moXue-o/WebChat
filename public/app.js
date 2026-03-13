@@ -5,64 +5,90 @@ const socket = io();
 const chatMessages = document.getElementById('chat-messages');
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
+const fileInput = document.getElementById('file-input');
+const fileSelectButton = document.getElementById('file-select-button');
 
 // 存储当前用户信息
 let currentUser = null;
 
-// 检查是否已登录
-function checkLoginStatus() {
-  const savedUsername = localStorage.getItem('username');
-  const authToken = localStorage.getItem('authToken');
+// 生成随机用户名
+function generateRandomUsername() {
+  // 常见英文名字列表
+  const firstNames = ['John', 'Emma', 'Michael', 'Olivia', 'William', 'Ava', 'James', 'Sophia', 'Robert', 'Isabella', 'David', 'Charlotte', 'Joseph', 'Mia', 'Thomas', 'Amelia', 'Charles', 'Harper', 'George', 'Evelyn'];
+  // 常见英文姓氏列表
+  const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin'];
   
-  console.log('检查登录状态:');
-  console.log('用户名:', savedUsername);
-  console.log('令牌:', authToken ? '存在' : '不存在');
-  
-  if (savedUsername && authToken) {
-    // 有保存的用户名和令牌，尝试自动登录
-    currentUser = { username: savedUsername };
-    // 向服务器验证令牌
-    console.log('尝试使用令牌验证');
-    socket.emit('authenticate', { token: authToken });
-  } else {
-    // 如果没有保存的用户名或令牌，重定向到登录页面
-    console.log('没有有效的登录信息，重定向到登录页面');
-    localStorage.removeItem('username');
-    localStorage.removeItem('authToken');
-    window.location.href = '/login.html';
-  }
+  const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+  return `${randomFirstName} ${randomLastName}`;
 }
 
-// 确保DOM加载完成后再检查登录状态
+// 初始化用户
+function initUser() {
+  // 尝试从本地存储获取用户名，如果没有则生成新的
+  let username = localStorage.getItem('username');
+  if (!username) {
+    username = generateRandomUsername();
+    localStorage.setItem('username', username);
+  }
+  currentUser = { username: username };
+  console.log('当前用户:', currentUser);
+  
+  // 向服务器发送用户信息
+  socket.emit('user join', { username: username });
+}
+
+// 确保DOM加载完成后初始化用户
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', checkLoginStatus);
+  document.addEventListener('DOMContentLoaded', initUser);
 } else {
-  checkLoginStatus();
+  initUser();
 }
 
-// 处理身份验证结果
-socket.on('authenticate result', (result) => {
+// 处理用户加入结果
+socket.on('user join result', (result) => {
   if (result.success) {
-    // 验证成功
-    console.log('身份验证成功');
-    currentUser = { username: localStorage.getItem('username') };
+    console.log('用户加入成功');
   } else {
-    // 验证失败，清除无效令牌并重定向到登录页面
-    console.log('身份验证失败:', result.message);
-    localStorage.removeItem('username');
-    localStorage.removeItem('authToken');
-    window.location.href = '/login.html';
+    console.log('用户加入失败:', result.message);
   }
-})
+});
 
 // 发送消息函数
 function sendMessage() {
   const text = messageInput.value.trim();
-  if (text) {
-    socket.emit('chat message', {
-      text: text
-    });
+  const files = fileInput.files;
+  
+  if (text || files.length > 0) {
+    if (files.length > 0) {
+      // 处理文件上传
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          const fileData = e.target.result;
+          socket.emit('chat message', {
+            text: text,
+            file: {
+              name: file.name,
+              type: file.type,
+              data: fileData
+            }
+          });
+        };
+        
+        reader.readAsDataURL(file);
+      }
+    } else {
+      // 只发送文本消息
+      socket.emit('chat message', {
+        text: text
+      });
+    }
+    
     messageInput.value = '';
+    fileInput.value = '';
   }
 }
 
@@ -73,6 +99,58 @@ sendButton.addEventListener('click', sendMessage);
 messageInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     sendMessage();
+  }
+});
+
+// 处理切换按钮点击
+let isExpanded = false;
+fileSelectButton.addEventListener('click', () => {
+  isExpanded = !isExpanded;
+  
+  // 切换按钮样式和动画
+  fileSelectButton.classList.toggle('active');
+  
+  // 显示/隐藏额外功能
+  const additionalFeatures = document.querySelector('.additional-features');
+  if (isExpanded) {
+    // 先显示元素，再添加active类触发动画
+    additionalFeatures.style.display = 'flex';
+    // 强制重排
+    void additionalFeatures.offsetWidth;
+    additionalFeatures.classList.add('active');
+  } else {
+    // 先移除active类触发动画，动画结束后隐藏元素
+    additionalFeatures.classList.remove('active');
+    setTimeout(() => {
+      additionalFeatures.style.display = 'none';
+    }, 100); // 与CSS过渡时间一致
+  }
+  
+  // 调整输入栏位置
+  const messageInputContainer = document.querySelector('.message-input-container');
+  messageInputContainer.classList.toggle('expanded');
+});
+
+// 处理文件上传按钮点击
+const fileUploadButton = document.querySelector('.file-upload-button');
+fileUploadButton.addEventListener('click', () => {
+  fileInput.click();
+});
+
+// 处理文件输入变化
+fileInput.addEventListener('change', (e) => {
+  const files = e.target.files;
+  if (files.length > 0) {
+    console.log(`选择了 ${files.length} 个文件`);
+    // 选择文件后自动收起额外功能
+    isExpanded = false;
+    fileSelectButton.classList.remove('active');
+    const additionalFeatures = document.querySelector('.additional-features');
+    additionalFeatures.classList.remove('active');
+    setTimeout(() => {
+      additionalFeatures.style.display = 'none';
+    }, 100); // 与CSS过渡时间一致
+    document.querySelector('.message-input-container').classList.remove('expanded');
   }
 });
 
@@ -94,16 +172,16 @@ socket.on('chat message', (message) => {
 // 处理错误消息
 socket.on('error message', (error) => {
   alert(error.message);
-  if (error.message.includes('请先登录')) {
-    window.location.href = '/login.html';
-  }
 });
 
 // 处理被踢下线
 socket.on('kicked', (data) => {
   alert(data.message);
-  localStorage.removeItem('username');
-  window.location.href = '/login.html';
+  // 生成新的用户名
+  const newUsername = generateRandomUsername();
+  localStorage.setItem('username', newUsername);
+  currentUser = { username: newUsername };
+  socket.emit('user join', { username: newUsername });
 });
 
 // 将消息添加到聊天窗口
@@ -115,12 +193,37 @@ function appendMessage(message) {
   const isCurrentUser = currentUser && message.username === currentUser.username;
   messageElement.classList.add(isCurrentUser ? 'user' : 'other');
 
-  messageElement.innerHTML = `
+  let messageContent = `
     <div class="username">${message.username}</div>
-    <div class="text">${escapeHtml(message.text)}</div>
+    <div class="text">${escapeHtml(message.text || '')}</div>
+  `;
+
+  // 如果消息包含文件
+  if (message.file) {
+    const file = message.file;
+    if (file.type.startsWith('image/')) {
+      // 图片文件显示预览
+      messageContent += `
+        <div class="file-attachment">
+          <img src="${file.data}" alt="${escapeHtml(file.name)}" class="file-preview">
+          <a href="${file.data}" download="${escapeHtml(file.name)}" class="file-link">${escapeHtml(file.name)}</a>
+        </div>
+      `;
+    } else {
+      // 其他文件显示下载链接
+      messageContent += `
+        <div class="file-attachment">
+          <a href="${file.data}" download="${escapeHtml(file.name)}" class="file-link">${escapeHtml(file.name)}</a>
+        </div>
+      `;
+    }
+  }
+
+  messageContent += `
     <div class="timestamp">${message.timestamp}</div>
   `;
 
+  messageElement.innerHTML = messageContent;
   chatMessages.appendChild(messageElement);
 }
 
@@ -186,69 +289,18 @@ adjustInterfaceSize();
 
 // 推送更新功能已移除
 
-// 退出登录功能
-function setupLogout() {
+// 隐藏退出登录按钮
+function setupLogoutButton() {
   const logoutButton = document.getElementById('logout-button');
   if (logoutButton) {
-    logoutButton.addEventListener('click', () => {
-      // 清除本地存储的用户信息
-      localStorage.removeItem('username');
-      localStorage.removeItem('authToken');
-      // 断开Socket连接
-      socket.disconnect();
-      // 重定向到登录页面
-      window.location.href = '/login.html';
-    });
+    logoutButton.style.display = 'none';
   }
 }
 
-// 确保DOM加载完成后设置退出登录功能
+// 确保DOM加载完成后隐藏退出登录按钮
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', setupLogout);
+  document.addEventListener('DOMContentLoaded', setupLogoutButton);
 } else {
-  setupLogout();
+  setupLogoutButton();
 }
 
-// 设置角落信息
-function setupCornerInfo() {
-  const appVersion = document.getElementById('app-version');
-  const updateDate = document.getElementById('update-date');
-
-  // 定义版本号
-  const version = { major: 2, minor: 0, patch: 0 };
-  appVersion.textContent = `${version.major}.${version.minor}.${version.patch}`;
-  console.log('当前版本: 2.0.0 - 增加了登录系统和用户数据库');
-
-  // 设置更新日期为当前日期
-  const now = new Date();
-  const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  updateDate.textContent = formattedDate;
-
-  // 提供一个更新版本号的函数
-  window.updateVersion = function(updateType = 'patch') {
-    switch(updateType) {
-      case 'major':
-        version.major++;
-        version.minor = 0;
-        version.patch = 0;
-        break;
-      case 'minor':
-        version.minor++;
-        version.patch = 0;
-        break;
-      case 'patch':
-      default:
-        version.patch++;
-    }
-    appVersion.textContent = `${version.major}.${version.minor}.${version.patch}`;
-    console.log(`版本已更新为: ${version.major}.${version.minor}.${version.patch}`);
-    return `${version.major}.${version.minor}.${version.patch}`;
-  };
-}
-
-// 确保DOM加载完成后再设置角落信息
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', setupCornerInfo);
-} else {
-  setupCornerInfo();
-}

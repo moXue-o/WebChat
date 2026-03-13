@@ -148,30 +148,53 @@ body {
 
 .message-input input {
   flex: 1;
-  padding: var(--spacing-sm);
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: var(--spacing-md);
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
   font-size: clamp(1rem, 2vw, 1.1rem);
+  background-color: #f5f5f5;
+  transition: all 0.3s ease;
+}
+
+.message-input input:focus {
+  outline: none;
+  border-color: #4a6ea9;
+  background-color: white;
+  box-shadow: 0 0 0 2px rgba(74, 110, 169, 0.1);
 }
 
 .message-input button {
-  padding: var(--spacing-sm) var(--spacing-md);
+  width: clamp(40px, 10vw, 56px);
+  height: clamp(40px, 10vw, 56px);
+  padding: var(--spacing-sm);
   background-color: #4a6ea9;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 50%;
   cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: clamp(1rem, 2vw, 1.1rem);
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: clamp(40px, 10vw, 56px);
+  min-height: clamp(40px, 10vw, 56px);
 }
 
 .message-input button:hover {
   background-color: #3a5a89;
+  transform: scale(1.05);
 }
 
 /* 响应式设计 - 移动设备优先 */
 /* 触摸目标优化 */
-.message-input button, .username-input input, .message-input input {
+.message-input button {
+  min-height: clamp(40px, 10vw, 56px);
+  min-width: clamp(40px, 10vw, 56px);
+  touch-action: manipulation;
+}
+
+.username-input input, .message-input input {
   min-height: clamp(36px, 8vw, 48px);
   min-width: clamp(48px, 10vw, 60px);
   touch-action: manipulation;
@@ -241,9 +264,10 @@ body {
   }
 
   .message-input button {
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-sm);
     font-size: clamp(16px, 4vw, 18px);
-    min-width: clamp(60px, 15vw, 80px);
+    min-width: clamp(40px, 10vw, 56px);
+    min-height: clamp(40px, 10vw, 56px);
   }
 
   /* 优化消息时间戳显示 */
@@ -288,8 +312,10 @@ body {
   }
 
   .message-input button {
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-sm);
     font-size: clamp(16px, 3vw, 18px);
+    min-width: clamp(40px, 10vw, 56px);
+    min-height: clamp(40px, 10vw, 56px);
   }
 
   /* 平板横屏模式优化 */
@@ -502,6 +528,160 @@ body {
 .message-input.full-width {
   width: 100%;
   margin: 0;
+}
+
+/* 消息输入容器 */
+.message-input-container {
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.message-input-container.expanded {
+  margin-bottom: var(--spacing-md);
+}
+
+/* 切换按钮样式 */
+.toggle-button {
+  padding: var(--spacing-sm);
+  background-color: white;
+  color: black;
+  border: 2px solid #4a6ea9;
+  border-radius: 50%;
+  width: clamp(40px, 10vw, 56px);
+  height: clamp(40px, 10vw, 56px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.toggle-button:hover {
+  background-color: #f0f5ff;
+}
+
+.toggle-button.active {
+  background-color: #4a6ea9;
+  color: white;
+  border-color: #4a6ea9;
+}
+
+.toggle-button.active .plus-icon {
+  transform: rotate(45deg) translate(1px, -1px);
+  transition: transform 0.3s ease;
+}
+
+.plus-icon {
+  transition: transform 0.3s ease;
+  display: block;
+  font-size: 2rem;
+  line-height: 1.2;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* 额外功能区域 */
+.additional-features {
+  display: none;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: 0;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  margin-top: var(--spacing-sm);
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.1s ease-in-out;
+}
+
+.additional-features.active {
+  display: flex;
+  max-height: 100px;
+  padding: var(--spacing-md);
+}
+
+/* 功能按钮样式 */
+.feature-button {
+  width: 48px;
+  height: 48px;
+  padding: var(--spacing-sm);
+  background-color: white;
+  color: #4a6ea9;
+  border: 1px solid #4a6ea9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.file-upload-button span {
+  display: block;
+}
+
+.file-upload-button span.file-icon {
+  margin-right: 0;
+}
+
+.file-upload-button span:not(.file-icon) {
+  display: none;
+}
+
+.file-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  border-radius: 6px;
+  background-color: #f0f5ff;
+  font-size: 1rem;
+}
+
+.feature-button:hover {
+  background-color: #f0f5ff;
+  border-color: #3a5a89;
+}
+
+/* 文件输入样式 */
+.file-input {
+  display: none;
+}
+
+/* 文件附件样式 */
+.file-attachment {
+  margin-top: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* 文件预览样式 */
+.file-preview {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 4px;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* 文件链接样式 */
+.file-link {
+  display: inline-block;
+  padding: var(--spacing-sm);
+  background-color: #f0f0f0;
+  color: #4a6ea9;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  transition: background-color 0.3s;
+}
+
+.file-link:hover {
+  background-color: #e0e0e0;
+  text-decoration: underline;
 }
 
 /* 关于图标和模态框样式 */

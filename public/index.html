@@ -16,20 +16,26 @@
       <!-- 聊天消息将在这里显示 -->
     </div>
     <div class="chat-input">
-      <div class="message-input full-width">
-        <input type="text" id="message-input" placeholder="输入消息...">
-        <button id="send-button">发送</button>
+      <div class="message-input-container">
+        <div class="message-input full-width">
+          <input type="text" id="message-input" placeholder="输入消息...">
+          <button id="file-select-button" class="toggle-button"><span class="plus-icon">+</span></button>
+          <button id="send-button"><strong>></strong></button>
+        </div>
+        <div class="additional-features">
+          <input type="file" id="file-input" class="file-input" multiple>
+          <button class="feature-button file-upload-button">
+            <span class="file-icon">📁</span>
+            <span>上传文件</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="app.js"></script>
-<!-- 左下角信息 -->
-<div class="corner-info left-bottom">
-  <p>版本: <span id="app-version">2.1.0</span></p>
-  <p>更新日期: <span id="update-date"></span></p>
-</div>
+
 
 </body>
 </html>

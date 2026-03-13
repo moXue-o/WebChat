@@ -6,29 +6,8 @@ const fs = require('fs');
 // 引入用户数据库
 const userDB = require('./users');
 
-// 存储已认证的用户会话和令牌
-const authenticatedUsers = new Map();
-const userSessions = new Map();
-const SESSION_EXPIRY_TIME = 24 * 60 * 60 * 1000; // 24小时
-
-// 生成唯一令牌
-function generateToken() {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
-}
-
-// 清理过期会话
-function cleanupExpiredSessions() {
-  const now = Date.now();
-  for (const [token, session] of userSessions.entries()) {
-    if (now - session.createdAt > SESSION_EXPIRY_TIME) {
-      userSessions.delete(token);
-      console.log(`清理过期会话: ${token}`);
-    }
-  }
-}
-
-// 每小时清理一次过期会话
-setInterval(cleanupExpiredSessions, 60 * 60 * 1000);
+// 存储在线用户
+const onlineUsers = new Map();
 
 // 推送更新功能已移除
 
@@ -61,136 +40,41 @@ io.on('connection', (socket) => {
   console.log('新用户连接:', socket.id);
   let currentUser = null;
 
-  // 处理登录请求
-  socket.on('login', (credentials) => {
-    const { username, password } = credentials;
-    const user = userDB.verifyUser(username, password);
-
-    if (user) {
-      // 检查用户是否已在其他地方登录
-      for (const [socketId, u] of authenticatedUsers.entries()) {
-        if (u.id === user.id && socketId !== socket.id) {
-          // 通知旧连接已被挤下线
-          io.to(socketId).emit('kicked', { message: '您的账号在其他地方登录' });
-          // 移除旧连接
-          authenticatedUsers.delete(socketId);
-          break;
-        }
+  // 处理用户加入
+  socket.on('user join', (data) => {
+    const { username } = data;
+    
+    // 检查用户名是否已被其他连接使用
+    for (const [socketId, user] of onlineUsers.entries()) {
+      if (user.username === username && socketId !== socket.id) {
+        // 通知旧连接已被挤下线
+        io.to(socketId).emit('kicked', { message: '您的用户名已被其他设备使用' });
+        // 移除旧连接
+        onlineUsers.delete(socketId);
+        break;
       }
-
-      // 生成新令牌
-      const token = generateToken();
-
-      // 存储认证信息
-      currentUser = user;
-      authenticatedUsers.set(socket.id, user);
-      userSessions.set(token, {
-        userId: user.id,
-        username: user.username,
-        createdAt: Date.now()
-      });
-
-      console.log(`用户 ${user.username} 登录`);
-
-      // 发送登录成功响应
-      socket.emit('login result', {
-        success: true,
-        username: user.username,
-        authToken: token
-      });
-
-      // 发送聊天历史给登录的客户端
-      socket.emit('chat history', chatHistory);
-    } else {
-      // 发送登录失败响应
-      socket.emit('login result', {
-        success: false,
-        message: '用户名或密码错误'
-      });
     }
-  });
 
-  // 处理注册请求（预留接口）
-  socket.on('register', (data) => {
-    const { username, password } = data;
-    const newUser = userDB.addUser(username, password);
+    // 存储用户信息
+    currentUser = { username: username, id: socket.id };
+    onlineUsers.set(socket.id, currentUser);
 
-    if (newUser) {
-      socket.emit('register result', {
-        success: true,
-        message: '注册成功，请登录'
-      });
-    } else {
-      socket.emit('register result', {
-        success: false,
-        message: '用户名已存在'
-      });
-    }
-  });
+    console.log(`用户 ${username} 加入`);
 
-  // 处理身份验证请求
-  socket.on('authenticate', (data) => {
-    const { token } = data;
-    const session = userSessions.get(token);
+    // 发送加入成功响应
+    socket.emit('user join result', {
+      success: true
+    });
 
-    if (session) {
-      // 检查会话是否过期
-      if (Date.now() - session.createdAt > SESSION_EXPIRY_TIME) {
-        userSessions.delete(token);
-        socket.emit('authenticate result', {
-          success: false,
-          message: '会话已过期，请重新登录'
-        });
-        return;
-      }
-
-      // 查找用户
-      const user = userDB.findUserByUsername(session.username);
-
-      if (user) {
-        // 检查用户是否已在其他地方登录
-        for (const [socketId, u] of authenticatedUsers.entries()) {
-          if (u.id === user.id && socketId !== socket.id) {
-            // 通知旧连接已被挤下线
-            io.to(socketId).emit('kicked', { message: '您的账号在其他地方登录' });
-            // 移除旧连接
-            authenticatedUsers.delete(socketId);
-            break;
-          }
-        }
-
-        // 更新认证信息
-        currentUser = user;
-        authenticatedUsers.set(socket.id, user);
-
-        console.log(`用户 ${user.username} 通过令牌认证`);
-
-        socket.emit('authenticate result', {
-          success: true,
-          username: user.username
-        });
-
-        // 发送聊天历史
-        socket.emit('chat history', chatHistory);
-      } else {
-        socket.emit('authenticate result', {
-          success: false,
-          message: '用户不存在'
-        });
-      }
-    } else {
-      socket.emit('authenticate result', {
-        success: false,
-        message: '无效的令牌'
-      });
-    }
+    // 发送聊天历史给新加入的客户端
+    socket.emit('chat history', chatHistory);
   });
 
   // 处理新消息
   socket.on('chat message', (msg) => {
-    // 检查用户是否已登录
+    // 检查用户是否已加入
     if (!currentUser) {
-      socket.emit('error message', { message: '请先登录' });
+      socket.emit('error message', { message: '请先加入聊天' });
       return;
     }
 
@@ -199,6 +83,7 @@ io.on('connection', (socket) => {
       userId: currentUser.id,
       username: currentUser.username,
       text: msg.text,
+      file: msg.file,
       timestamp: new Date().toLocaleTimeString()
     };
 
@@ -218,11 +103,11 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('用户断开连接:', socket.id);
 
-    // 如果是已登录用户
-      if (currentUser) {
-        authenticatedUsers.delete(socket.id);
-        console.log(`用户 ${currentUser.username} 断开连接`);
-      }
+    // 如果是已加入的用户
+    if (currentUser) {
+      onlineUsers.delete(socket.id);
+      console.log(`用户 ${currentUser.username} 断开连接`);
+    }
   });
 });
 
