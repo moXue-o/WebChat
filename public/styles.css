@@ -633,14 +633,90 @@ body {
 }
 
 .file-icon {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
-  text-align: center;
-  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background-color: #f0f5ff;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  margin-right: 8px;
+}
+
+.file-icon i {
+  font-size: 16px;
+}
+
+/* 不同类型文件的图标样式 */
+.file-icon-image {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.file-icon-audio {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.file-icon-video {
+  background-color: #fff2e8;
+  color: #fa8c16;
+}
+
+.file-icon-text {
+  background-color: #f9f0ff;
+  color: #722ed1;
+}
+
+.file-icon-pdf {
+  background-color: #fff1f0;
+  color: #f5222d;
+}
+
+.file-icon-doc {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.file-icon-xls {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.file-icon-zip {
+  background-color: #f0f0f0;
+  color: #1890ff;
+}
+
+.file-icon-ppt {
+  background-color: #fff2e8;
+  color: #fa8c16;
+}
+
+.file-icon-code {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.file-icon-exe {
+  background-color: #fff1f0;
+  color: #f5222d;
+}
+
+.file-icon-font {
+  background-color: #f9f0ff;
+  color: #722ed1;
+}
+
+.file-icon-db {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.file-icon-other {
+  background-color: #f9f9f9;
+  color: #666;
 }
 
 .feature-button:hover {
@@ -677,6 +753,86 @@ body {
   border-radius: 4px;
   font-size: clamp(0.9rem, 2vw, 1rem);
   transition: background-color 0.3s;
+}
+
+/* 文件预览容器 */
+.file-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  min-height: 0;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+/* 预览文件项 */
+.preview-file-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  max-width: 200px;
+  flex-shrink: 0;
+}
+
+/* 预览文件图标 */
+.preview-file-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: #f0f5ff;
+}
+
+.preview-file-icon i {
+  font-size: 16px;
+}
+
+/* 预览文件信息 */
+.preview-file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 预览文件名 */
+.preview-file-name {
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 预览文件大小 */
+.preview-file-size {
+  font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+  color: #666;
+}
+
+/* 移除文件按钮 */
+.remove-file-button {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 2px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.remove-file-button:hover {
+  background-color: #f0f0f0;
+  color: #e74c3c;
 }
 
 .file-link:hover {

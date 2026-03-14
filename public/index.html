@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>局域网聊天</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 </head>
 <body>
   <div class="chat-container">
@@ -17,6 +19,9 @@
     </div>
     <div class="chat-input">
       <div class="message-input-container">
+        <div class="file-preview-container" id="file-preview-container">
+          <!-- 文件预览将在这里显示 -->
+        </div>
         <div class="message-input full-width">
           <input type="text" id="message-input" placeholder="输入消息...">
           <button id="file-select-button" class="toggle-button"><span class="plus-icon">+</span></button>

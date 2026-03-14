@@ -3,8 +3,6 @@ const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
 const fs = require('fs');
-// 引入用户数据库
-const userDB = require('./users');
 
 // 存储在线用户
 const onlineUsers = new Map();
@@ -16,10 +14,14 @@ const app = express();
 // 创建 HTTP 服务器并将 Express 应用挂载其上
 const server = http.createServer(app);
 // 创建 Socket.IO 服务器并将其附加到 HTTP 服务器
-const io = new Server(server);
+const io = new Server(server, {
+  maxHttpBufferSize: 1e8 // 100MB
+});
 
-// 提供静态文件（前端资源）
-app.use(express.static(path.join(__dirname, 'public')));
+// 提供静态文件（前端资源），并设置缓存控制
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1d' // 缓存1天
+}));
 
 // 处理根路径请求
 app.get('/', (req, res) => {
@@ -84,6 +86,7 @@ io.on('connection', (socket) => {
       username: currentUser.username,
       text: msg.text,
       file: msg.file,
+      files: msg.files,
       timestamp: new Date().toLocaleTimeString()
     };
 
